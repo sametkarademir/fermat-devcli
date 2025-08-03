@@ -42,11 +42,11 @@ public class ConfigurationBuilder
         }
     }
 
-    public async Task<T> GetHandlerAsync<T>(string key)
+    public async Task<string> GetHandlerAsync(string key)
     {
         if (_handlers.TryGetValue(key, out var strategy))
         {
-            return await strategy.GetHandlerAsync<T>(key);
+            return await strategy.GetHandlerAsync(key);
         }
 
         throw new KeyNotFoundException($"No configuration strategy found for key: {key}");

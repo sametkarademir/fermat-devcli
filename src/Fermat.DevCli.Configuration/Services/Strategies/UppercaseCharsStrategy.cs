@@ -1,6 +1,5 @@
 using Fermat.DevCli.Configuration.Extensions;
 using Fermat.DevCli.Configuration.Interfaces;
-using Spectre.Console;
 
 namespace Fermat.DevCli.Configuration.Services.Strategies;
 
@@ -16,19 +15,18 @@ public class UppercaseCharsStrategy : IConfigurationStrategy
 
         passwordConfiguration.UppercaseChars = value;
         await ConfigurationFileExtensions.WritePasswordConfiguration(passwordConfiguration);
-        AnsiConsole.MarkupLine("[bold green]Uppercase characters set to {0}[/]", Markup.Escape(value));
     }
 
-    public async Task<T> GetHandlerAsync<T>(string key)
+    public async Task<string> GetHandlerAsync(string key)
     {
         try
         {
             var passwordConfiguration = await ConfigurationFileExtensions.ReadPasswordConfiguration();
-            return (T)(passwordConfiguration.UppercaseChars as object);
+            return passwordConfiguration.UppercaseChars.ToString();
         }
         catch (Exception)
         {
-            throw new InvalidOperationException($"Cannot get value for key '{key}' as type '{typeof(T).Name}' is not supported.");
+            throw new InvalidOperationException($"Cannot get value for key '{key}'. Ensure the configuration file is set up correctly.");
         }
     }
 }

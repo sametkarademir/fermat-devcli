@@ -2,6 +2,7 @@ using System.CommandLine;
 using Fermat.DevCli.Configuration.Constans;
 using Fermat.DevCli.Configuration.Services;
 using Fermat.DevCli.Shared.Abstracts;
+using Fermat.DevCli.Shared.Extensions.ConsoleOutputs;
 using Spectre.Console;
 
 namespace Fermat.DevCli.Configuration.Commands.Get;
@@ -46,15 +47,14 @@ public class GetCommand : BaseCommand
         {
 
             var builder = new ConfigurationBuilder();
-            var result = await builder.GetHandlerAsync<string>(key);
+            var result = await builder.GetHandlerAsync(key);
             if (string.IsNullOrWhiteSpace(result))
             {
-
-                AnsiConsole.MarkupLine("[bold red]Configuration key '{0}' not found.[/]", Markup.Escape(key));
+                ConsoleOutputExtensions.PrintError($"Configuration key '{key}' not found.");
             }
             else
             {
-                AnsiConsole.MarkupLine("[bold green]Configuration key '{0}' has value: {1}[/]", Markup.Escape(key), Markup.Escape(result));
+                ConsoleOutputExtensions.PrintSuccess($"Configuration key '{key}' has value: {result}");
             }
 
         }, keyArgument);

@@ -10,7 +10,8 @@ public static class ConsoleOutputExtensions
     /// <param name="message">The message to display</param>
     public static void PrintSuccess(string message)
     {
-        AnsiConsole.MarkupLine($"[green]✓ {message}[/]");
+        Console.WriteLine(message);
+        AnsiConsole.MarkupLine($"[green]✓ {Markup.Escape(message)}[/]");
     }
 
     /// <summary>
@@ -19,7 +20,7 @@ public static class ConsoleOutputExtensions
     /// <param name="message">The message to display</param>
     public static void PrintError(string message)
     {
-        AnsiConsole.MarkupLine($"[red]✗ {message}[/]");
+        AnsiConsole.MarkupLine($"[red]✗ {Markup.Escape(message)}[/]");
     }
 
     /// <summary>
@@ -28,7 +29,7 @@ public static class ConsoleOutputExtensions
     /// <param name="message">The message to display</param>
     public static void PrintWarning(string message)
     {
-        AnsiConsole.MarkupLine($"[yellow]⚠ {message}[/]");
+        AnsiConsole.MarkupLine($"[yellow]⚠ {Markup.Escape(message)}[/]");
     }
 
     /// <summary>
@@ -37,7 +38,7 @@ public static class ConsoleOutputExtensions
     /// <param name="message">The message to display</param>
     public static void PrintInfo(string message)
     {
-        AnsiConsole.MarkupLine($"[blue]ℹ {message}[/]");
+        AnsiConsole.MarkupLine($"[blue]ℹ {Markup.Escape(message)}[/]");
     }
 
     /// <summary>
@@ -46,7 +47,7 @@ public static class ConsoleOutputExtensions
     /// <param name="title">The header title</param>
     public static void PrintHeader(string title)
     {
-        AnsiConsole.Write(new Rule($"[bold blue]{title}[/]").RuleStyle("blue").Centered());
+        AnsiConsole.Write(new Rule($"[bold blue]{Markup.Escape(title)}[/]").RuleStyle("blue").Centered());
     }
 
     /// <summary>
@@ -56,8 +57,7 @@ public static class ConsoleOutputExtensions
     /// <param name="action">The action to perform with progress</param>
     public static void ShowProgress(string description, Action<ProgressContext> action)
     {
-        AnsiConsole.Progress()
-            .Start(ctx => action(ctx));
+        AnsiConsole.Progress().Start(ctx => action(ctx));
     }
 
     /// <summary>
@@ -91,7 +91,7 @@ public static class ConsoleOutputExtensions
     /// <param name="message">The message to display</param>
     public static void PrintMessage(string message)
     {
-        AnsiConsole.WriteLine(message);
+        AnsiConsole.WriteLine(Markup.Escape(message));
     }
 
     /// <summary>
@@ -101,7 +101,7 @@ public static class ConsoleOutputExtensions
     /// <param name="color">The color to use</param>
     public static void PrintMessage(string message, string color)
     {
-        AnsiConsole.MarkupLine($"[{color}]{message}[/]");
+        AnsiConsole.MarkupLine($"[{color}]{Markup.Escape(message)}[/]");
     }
 
     /// <summary>
