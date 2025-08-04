@@ -1,27 +1,50 @@
+using Fermat.DevCli.Configuration.Constans;
 using Fermat.DevCli.Configuration.Extensions;
 using Fermat.DevCli.Configuration.Interfaces;
+using Fermat.DevCli.Configuration.Models;
+using Fermat.DevCli.Shared.Interfaces;
 
 namespace Fermat.DevCli.Configuration.Services.Strategies;
 
-public class NumberCharsStrategy : IConfigurationStrategy
+public class NumberCharsStrategy(IResourceAppService resourceAppService) : IConfigurationStrategy
 {
     public async Task SetHandlerAsync(string key, string value)
     {
-        var passwordConfiguration = await ConfigurationFileExtensions.ReadPasswordConfiguration();
-        if (string.IsNullOrWhiteSpace(value))
+        var passwordConfiguration = await resourceAppService.ReadConfiguration<PasswordConfiguration>
+        (
+            ConfigurationConsts.DirectoryPath,
+            ConfigurationConsts.PasswordConfigFileName
+        );
+
+        if (passwordConfiguration == null)
         {
-            throw new ArgumentException("Lowercase characters cannot be empty.");
+            throw new InvalidOperationException("Password configuration is not set up correctly.");
         }
 
         passwordConfiguration.NumberChars = value;
-        await ConfigurationFileExtensions.WritePasswordConfiguration(passwordConfiguration);
+        await resourceAppService.WriteConfiguration
+        (
+            passwordConfiguration,
+            ConfigurationConsts.DirectoryPath,
+            ConfigurationConsts.PasswordConfigFileName
+        );
     }
 
     public async Task<string> GetHandlerAsync(string key)
     {
         try
         {
-            var passwordConfiguration = await ConfigurationFileExtensions.ReadPasswordConfiguration();
+            var passwordConfiguration = await resourceAppService.ReadConfiguration<PasswordConfiguration>
+            (
+                ConfigurationConsts.DirectoryPath,
+                ConfigurationConsts.PasswordConfigFileName
+            );
+
+            if (passwordConfiguration == null)
+            {
+                throw new InvalidOperationException("Password configuration is not set up correctly.");
+            }
+
             return passwordConfiguration.NumberChars.ToString();
         }
         catch (Exception)

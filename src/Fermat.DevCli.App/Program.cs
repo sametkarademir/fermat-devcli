@@ -1,5 +1,7 @@
 ﻿using System.CommandLine;
 using Fermat.DevCli.Configuration.Extensions;
+using Fermat.DevCli.Password.Extensions;
+using Fermat.DevCli.Shared.Extensions;
 using Fermat.DevCli.Shared.Extensions.ConsoleOutputs;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console;
@@ -14,7 +16,9 @@ public static class Program
         {
             var services =
                 new ServiceCollection()
-                    .AddConfigurationCommandServices()
+                    .AddSharedCommandServices() // Register shared services
+                    .AddConfigurationCommandServices() // Register configuration services
+                    .AddPasswordCommandServices() // Register password command services
                     .BuildServiceProvider();
 
             var rootCommand = new RootCommand("Fermat Development CLI - A powerful development tool");
@@ -24,6 +28,7 @@ public static class Program
 
             // Add sample commands
             rootCommand.AddConfigurationCommand(services);
+            rootCommand.AddPasswordCommand(services);
             await rootCommand.InvokeAsync(args);
         }
         catch (Exception e)

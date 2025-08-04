@@ -3,10 +3,11 @@ using Fermat.DevCli.Configuration.Constans;
 using Fermat.DevCli.Configuration.Services;
 using Fermat.DevCli.Shared.Abstracts;
 using Fermat.DevCli.Shared.Extensions.ConsoleOutputs;
+using Fermat.DevCli.Shared.Interfaces;
 
 namespace Fermat.DevCli.Configuration.Commands.Set;
 
-public class SetCommand : BaseCommand
+public class SetCommand(IResourceAppService resourceAppService) : BaseCommand
 {
     public override string Name => "set";
     public override string Description => "Set a configuration value";
@@ -65,7 +66,7 @@ public class SetCommand : BaseCommand
         command.SetHandler(async (key, value) =>
         {
 
-            var builder = new ConfigurationBuilder();
+            var builder = new ConfigurationBuilder(resourceAppService);
             await builder.SetHandlerAsync(key, value);
             ConsoleOutputExtensions.PrintSuccess($"Configuration key '{key}' set to: {value}");
 

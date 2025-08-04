@@ -2,13 +2,15 @@ using System.CommandLine;
 using System.Text.Json;
 using Fermat.DevCli.Configuration.Constans;
 using Fermat.DevCli.Configuration.Extensions;
+using Fermat.DevCli.Configuration.Models;
 using Fermat.DevCli.Shared.Abstracts;
 using Fermat.DevCli.Shared.Extensions.ConsoleOutputs;
+using Fermat.DevCli.Shared.Interfaces;
 using Spectre.Console;
 
 namespace Fermat.DevCli.Configuration.Commands.GetList;
 
-public class GetListCommand : BaseCommand
+public class GetListCommand(IResourceAppService resourceAppService) : BaseCommand
 {
     public override string Name => "get-list";
     public override string Description => "List all available configuration options";
@@ -19,7 +21,16 @@ public class GetListCommand : BaseCommand
 
         command.SetHandler(async () =>
         {
-            var passwordConfiguration = await ConfigurationFileExtensions.ReadPasswordConfiguration();
+            var passwordConfiguration = await resourceAppService.ReadConfiguration<PasswordConfiguration>
+            (
+                ConfigurationConsts.DirectoryPath,
+                ConfigurationConsts.PasswordConfigFileName
+            );
+
+            if (passwordConfiguration == null)
+            {
+                throw new InvalidOperationException("Password configuration is not set up correctly.");
+            }
 
             var table = ConsoleOutputExtensions.CreateTable("Key", "Value");
 
