@@ -1,23 +1,24 @@
 using Fermat.DevCli.Configuration.Constans;
 using Fermat.DevCli.Configuration.Interfaces;
 using Fermat.DevCli.Configuration.Services.Strategies;
+using Fermat.DevCli.Shared.Interfaces;
 
 namespace Fermat.DevCli.Configuration.Services;
 
-public class ConfigurationBuilder
+public class ConfigurationBuilder(IResourceAppService resourceAppService)
 {
     private readonly Dictionary<string, IConfigurationStrategy> _handlers = new()
     {
-        { ConfigurationConsts.PasswordLength, new LengthStrategy() },
-        { ConfigurationConsts.PasswordIncludeUppercase, new IncludeUppercaseStrategy() },
-        { ConfigurationConsts.PasswordUppercaseChars, new UppercaseCharsStrategy() },
-        { ConfigurationConsts.PasswordIncludeLowercase, new IncludeLowercaseStrategy() },
-        { ConfigurationConsts.PasswordLowercaseChars, new LowercaseCharsStrategy() },
-        { ConfigurationConsts.PasswordIncludeNumbers, new IncludeNumbersStrategy() },
-        { ConfigurationConsts.PasswordNumberChars, new NumberCharsStrategy() },
-        { ConfigurationConsts.PasswordIncludeSpecialCharacters, new IncludeSpecialCharactersStrategy() },
-        { ConfigurationConsts.PasswordSpecialChars, new SpecialCharsStrategy() },
-        { ConfigurationConsts.PasswordExcludeChars, new ExcludeCharsStrategy() },
+        { ConfigurationConsts.PasswordLength, new LengthStrategy(resourceAppService) },
+        { ConfigurationConsts.PasswordIncludeUppercase, new IncludeUppercaseStrategy(resourceAppService) },
+        { ConfigurationConsts.PasswordUppercaseChars, new UppercaseCharsStrategy(resourceAppService) },
+        { ConfigurationConsts.PasswordIncludeLowercase, new IncludeLowercaseStrategy(resourceAppService) },
+        { ConfigurationConsts.PasswordLowercaseChars, new LowercaseCharsStrategy(resourceAppService) },
+        { ConfigurationConsts.PasswordIncludeNumbers, new IncludeNumbersStrategy(resourceAppService) },
+        { ConfigurationConsts.PasswordNumberChars, new NumberCharsStrategy(resourceAppService) },
+        { ConfigurationConsts.PasswordIncludeSpecialCharacters, new IncludeSpecialCharactersStrategy(resourceAppService) },
+        { ConfigurationConsts.PasswordSpecialChars, new SpecialCharsStrategy(resourceAppService) },
+        { ConfigurationConsts.PasswordExcludeChars, new ExcludeCharsStrategy(resourceAppService) },
     };
 
     public IConfigurationStrategy GetStrategy(string key)

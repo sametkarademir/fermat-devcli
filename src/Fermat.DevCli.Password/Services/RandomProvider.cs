@@ -1,0 +1,44 @@
+using System.Security.Cryptography;
+using Fermat.DevCli.Password.Interfaces;
+
+namespace Fermat.DevCli.Password.Services;
+
+public class RandomProvider : IRandomProvider, IDisposable
+{
+    private readonly RandomNumberGenerator _rng = RandomNumberGenerator.Create();
+
+    public int GetRandomInt(int minInclusive, int maxExclusive)
+    {
+        if (minInclusive >= maxExclusive)
+        {
+            throw new ArgumentOutOfRangeException(nameof(minInclusive),
+                $"The minimum value must be less than the maximum value. Min: [{minInclusive}], Max: [{maxExclusive}]");
+        }
+
+        var buffer = new byte[4];
+        _rng.GetBytes(buffer);
+
+        var randomInt = BitConverter.ToInt32(buffer, 0);
+        var result = Math.Abs(randomInt == int.MinValue ? randomInt + 1 : randomInt);
+
+        return minInclusive + result % (maxExclusive - minInclusive);
+    }
+
+    public byte[] GetRandomBytes(int length)
+    {
+        if (length <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(length),
+                "The length must be a positive integer.");
+        }
+
+        var buffer = new byte[length];
+        _rng.GetBytes(buffer);
+        return buffer;
+    }
+
+    public void Dispose()
+    {
+        _rng.Dispose();
+    }
+}

@@ -60,6 +60,17 @@ public static class ConsoleOutputExtensions
         AnsiConsole.Progress().Start(ctx => action(ctx));
     }
 
+
+    /// <summary>
+    /// Prints a progress bar (async version)
+    /// </summary>
+    /// <param name="description">Description of the operation</param>
+    /// <param name="action">The async action to perform with progress</param>
+    public static async Task ShowProgressAsync(Func<ProgressContext, Task> action)
+    {
+        await AnsiConsole.Progress().StartAsync(async ctx => await action(ctx));
+    }
+
     /// <summary>
     /// Creates a table with the specified headers
     /// </summary>

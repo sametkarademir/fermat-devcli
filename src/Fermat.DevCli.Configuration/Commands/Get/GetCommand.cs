@@ -3,11 +3,12 @@ using Fermat.DevCli.Configuration.Constans;
 using Fermat.DevCli.Configuration.Services;
 using Fermat.DevCli.Shared.Abstracts;
 using Fermat.DevCli.Shared.Extensions.ConsoleOutputs;
+using Fermat.DevCli.Shared.Interfaces;
 using Spectre.Console;
 
 namespace Fermat.DevCli.Configuration.Commands.Get;
 
-public class GetCommand : BaseCommand
+public class GetCommand(IResourceAppService resourceAppService) : BaseCommand
 {
     public override string Name => "get";
     public override string Description => "Get a configuration value";
@@ -46,7 +47,7 @@ public class GetCommand : BaseCommand
         command.SetHandler(async (key) =>
         {
 
-            var builder = new ConfigurationBuilder();
+            var builder = new ConfigurationBuilder(resourceAppService);
             var result = await builder.GetHandlerAsync(key);
             if (string.IsNullOrWhiteSpace(result))
             {

@@ -1,17 +1,34 @@
-using Fermat.DevCli.Configuration.Extensions;
+using Fermat.DevCli.Configuration.Constans;
 using Fermat.DevCli.Configuration.Interfaces;
+using Fermat.DevCli.Configuration.Models;
+using Fermat.DevCli.Shared.Interfaces;
 
 namespace Fermat.DevCli.Configuration.Services.Strategies;
 
-public class IncludeLowercaseStrategy : IConfigurationStrategy
+public class IncludeLowercaseStrategy(IResourceAppService resourceAppService) : IConfigurationStrategy
 {
     public async Task SetHandlerAsync(string key, string value)
     {
-        var passwordConfiguration = await ConfigurationFileExtensions.ReadPasswordConfiguration();
+        var passwordConfiguration = await resourceAppService.ReadConfiguration<PasswordConfiguration>
+        (
+            ConfigurationConsts.DirectoryPath,
+            ConfigurationConsts.PasswordConfigFileName
+        );
+
+        if (passwordConfiguration == null)
+        {
+            throw new InvalidOperationException("Password configuration is not set up correctly.");
+        }
+
         if (bool.TryParse(value, out var includeLowercase))
         {
             passwordConfiguration.IncludeLowercase = includeLowercase;
-            await ConfigurationFileExtensions.WritePasswordConfiguration(passwordConfiguration);
+            await resourceAppService.WriteConfiguration
+            (
+                passwordConfiguration,
+                ConfigurationConsts.DirectoryPath,
+                ConfigurationConsts.PasswordConfigFileName
+            );
         }
         else
         {
@@ -23,7 +40,17 @@ public class IncludeLowercaseStrategy : IConfigurationStrategy
     {
         try
         {
-            var passwordConfiguration = await ConfigurationFileExtensions.ReadPasswordConfiguration();
+            var passwordConfiguration = await resourceAppService.ReadConfiguration<PasswordConfiguration>
+            (
+                ConfigurationConsts.DirectoryPath,
+                ConfigurationConsts.PasswordConfigFileName
+            );
+
+            if (passwordConfiguration == null)
+            {
+                throw new InvalidOperationException("Password configuration is not set up correctly.");
+            }
+
             return passwordConfiguration.IncludeLowercase.ToString();
         }
         catch (Exception)
